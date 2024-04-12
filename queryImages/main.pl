@@ -1,6 +1,6 @@
-% dataset(DirectoryName)
+% dataset(DirectoryName) 
 % this is where the image dataset is located
-dataset('C:\\Users\\Documents\\imageDataset2_15_20\\').
+dataset('/Users/voldischool/Documents/Prolog-Projects/similaritySearchProlog/imageDataset2_15_20').
 % directory_textfiles(DirectoryName, ListOfTextfiles)
 % produces the list of text files in a directory
 directory_textfiles(D,Textfiles):- directory_files(D,Files), include(isTextFile, Files, Textfiles).
@@ -25,12 +25,31 @@ similarity_search(QueryFile,DatasetDirectory, DatasetFiles,Best):- read_hist_fil
 
 % compare_histograms(QueryHisto,DatasetDirectory,DatasetFiles,Scores)
 % compares a query histogram with a list of histogram files 
-compare_histograms(...?.
+compare_histograms(_, _, [], []). % Base case: Empty list of files
+compare_histograms(QueryHisto, DatasetDirectory, [File|RestFiles], [(File, Score)|RestScores]) :-
+    % Construct the full path to the histogram file
+    atom_concat(DatasetDirectory, File, FilePath),
+    % Read the histogram file
+    read_hist_file(FilePath, FileHisto),
+    % Calculate the similarity score between the query histogram and the current file histogram
+    histogram_intersection(QueryHisto, FileHisto, Score),
+    % Recursively compare with the rest of the files
+    compare_histograms(QueryHisto, DatasetDirectory, RestFiles, RestScores).
 
 % histogram_intersection(Histogram1, Histogram2, Score)
 % compute the intersection similarity score between two histograms
 % Score is between 0.0 and 1.0 (1.0 for identical histograms)
-histogram_intersection(H1,H2,S):- ... ?
+% histogram_intersection(H1,H2,S):- ... ?
+histogram_intersection([], [], 1.0). % If both histograms are empty, they are identical
+histogram_intersection([H1|T1], [H2|T2], Score) :-
+    histogram_intersection(T1, T2, RestScore), % Recursively calculate the score for the rest of the histograms
+    MinValue is min(H1, H2), % Calculate the minimum value of the corresponding bins
+    Score is RestScore + MinValue. % Accumulate the minimum values
+
+% Normalize the score based on the total count of bins
+normalize_score(_, 0, 0.0). % Avoid division by zero
+normalize_score(Score, TotalBins, NormalizedScore) :-
+    NormalizedScore is Score / TotalBins.
 
 % take(List,K,KList)
 % extracts the K first items in a list
