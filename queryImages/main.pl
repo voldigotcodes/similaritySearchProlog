@@ -1,6 +1,8 @@
+% this program worked using this path formulation ?- similarity_search('/Users/voldischool/Documents/Prolog-Projects/similaritySearchProlog/queryImages/q00.jpg.txt',S).
+
 % dataset(DirectoryName) 
 % this is where the image dataset is located
-dataset('/Users/voldischool/Documents/Prolog-Projects/similaritySearchProlog/imageDataset2_15_20').
+dataset('C:\\Users\\Documents\\imageDataset2_15_20\\').
 % directory_textfiles(DirectoryName, ListOfTextfiles)
 % produces the list of text files in a directory
 directory_textfiles(D,Textfiles):- directory_files(D,Files), include(isTextFile, Files, Textfiles).
@@ -27,13 +29,9 @@ similarity_search(QueryFile,DatasetDirectory, DatasetFiles,Best):- read_hist_fil
 % compares a query histogram with a list of histogram files 
 compare_histograms(_, _, [], []). % Base case: Empty list of files
 compare_histograms(QueryHisto, DatasetDirectory, [File|RestFiles], [(File, Score)|RestScores]) :-
-    % Construct the full path to the histogram file
     atom_concat(DatasetDirectory, File, FilePath),
-    % Read the histogram file
     read_hist_file(FilePath, FileHisto),
-    % Calculate the similarity score between the query histogram and the current file histogram
     histogram_intersection(QueryHisto, FileHisto, Score),
-    % Recursively compare with the rest of the files
     compare_histograms(QueryHisto, DatasetDirectory, RestFiles, RestScores).
 
 % histogram_intersection(Histogram1, Histogram2, Score)
