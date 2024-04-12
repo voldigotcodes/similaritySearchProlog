@@ -1,5 +1,3 @@
-% this program worked using this path formulation ?- similarity_search('/Users/voldischool/Documents/Prolog-Projects/similaritySearchProlog/queryImages/q00.jpg.txt',S).
-
 % dataset(DirectoryName) 
 % this is where the image dataset is located
 dataset('C:\\Users\\Documents\\imageDataset2_15_20\\').
